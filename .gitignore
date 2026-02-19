@@ -1,0 +1,11 @@
+# OS generated files
+.DS_Store
+Thumbs.db
+*.tmp
+
+# Editor directories
+.idea/
+.vscode/
+
+# Node modules (if you ever use npm in future)
+node_modules/

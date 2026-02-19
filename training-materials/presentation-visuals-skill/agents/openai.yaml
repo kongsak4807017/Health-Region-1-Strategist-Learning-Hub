@@ -1,0 +1,6 @@
+﻿interface:
+  display_name: "Slide Visual Curator"
+  short_description: "คัดภาพ/ไอคอนโอเพนซอร์สสำหรับสไลด์"
+  default_prompt: "ใช้ $slide-visuals-curator เพื่อคัดภาพ/ไอคอนและจัดการลิขสิทธิ์สำหรับสไลด์นี้"
+policy:
+  allow_implicit_invocation: true

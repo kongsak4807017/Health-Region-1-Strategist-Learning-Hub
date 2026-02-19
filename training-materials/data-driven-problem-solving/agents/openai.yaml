@@ -1,0 +1,4 @@
+interface:
+  display_name: "Data-Driven Problem Solving"
+  short_description: "Data analytics workflow, repo selection, research templates"
+  default_prompt: "Use $data-driven-problem-solving to frame the decision, pick a data science repo template, and outline an analysis plan."

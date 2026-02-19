@@ -1,0 +1,1466 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Region 1 Strategist Learning Hub</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Chart.js for visualization (optional) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- PDF.js & StPageFlip for Interactive Flipbook -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/page-flip/dist/js/page-flip.browser.js"></script>
+
+    <style>
+        :root {
+            /* Palette: Modern Medical & Professional */
+            --primary: #00897b;
+            /* Teal-600 */
+            --primary-light: #e0f2f1;
+            /* Teal-50 */
+            --primary-dark: #00695c;
+            /* Teal-800 */
+
+            --secondary: #f4511e;
+            /* Deep Orange-600 */
+            --secondary-light: #fbe9e7;
+            /* Deep Orange-50 */
+
+            --accent: #5e35b1;
+            /* Deep Purple-600 */
+
+            --bg-body: #f3f4f6;
+            /* Gray-100 */
+            --bg-card: #ffffff;
+
+            --text-main: #1f2937;
+            /* Gray-800 */
+            --text-secondary: #4b5563;
+            /* Gray-600 */
+            --text-light: #9ca3af;
+            /* Gray-400 */
+
+            --border: #e5e7eb;
+            /* Gray-200 */
+
+            --radius-sm: 0.5rem;
+            --radius: 0.75rem;
+            --radius-lg: 1rem;
+
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            width: 280px;
+            background: var(--bg-card);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            z-index: 10;
+        }
+
+        .brand {
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--primary);
+            background: linear-gradient(to right, var(--bg-card), #f0fdfa);
+        }
+
+        .brand i {
+            font-size: 1.5rem;
+        }
+
+        .brand span {
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: -0.02em;
+            color: var(--text-main);
+        }
+
+        .menu {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem 0.75rem;
+        }
+
+        .menu::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .menu::-webkit-scrollbar-thumb {
+            background: #e5e7eb;
+            border-radius: 4px;
+        }
+
+        .menu-category {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-light);
+            font-weight: 700;
+            margin: 1.5rem 0 0.5rem 0.75rem;
+        }
+
+        .menu-category:first-child {
+            margin-top: 0.5rem;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .menu-item:hover {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+        }
+
+        .menu-item.active {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+
+        .menu-item i {
+            width: 1.25rem;
+            text-align: center;
+        }
+
+        .user-profile {
+            padding: 1rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: #fafafa;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* --- Main Content --- */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* --- Typography --- */
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* --- Components --- */
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            /* Reduced padding slightly */
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .hero-banner {
+            background: linear-gradient(135deg, var(--primary) 0%, #004d40 100%);
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: var(--radius);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .hero-banner::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .header-badge {
+            display: inline-block;
+            padding: 0.35rem 0.85rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            margin-bottom: 0.75rem;
+            border: 1px solid rgba(0, 137, 123, 0.2);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid var(--border);
+            padding: 1.25rem;
+            border-radius: var(--radius);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 0.25rem;
+        }
+
+        /* Tables & Lists */
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background: white;
+            margin-bottom: 1.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        th {
+            background: #f8fafc;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-main);
+            border-bottom: 2px solid var(--border);
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .resource-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            margin-bottom: 0.75rem;
+            background: white;
+            transition: all 0.2s;
+            text-decoration: none;
+            color: var(--text-main);
+        }
+
+        .resource-link:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-sm);
+            transform: translateX(4px);
+        }
+
+        .resource-meta {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-top: 0.25rem;
+        }
+
+        /* Tools & Interactivity */
+        .interactive-box {
+            background: #fafaf9;
+            border: 1px dashed var(--secondary);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .step-indicator::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--border);
+            z-index: 0;
+        }
+
+        .step-item {
+            position: relative;
+            z-index: 1;
+            background: var(--bg-body);
+            padding: 0 10px;
+            text-align: center;
+        }
+
+        .step-circle {
+            width: 32px;
+            height: 32px;
+            background: white;
+            border: 2px solid var(--text-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.5rem;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .step-item.active .step-circle {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: white;
+        }
+
+        .step-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+                overflow: auto;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .menu {
+                display: flex;
+                overflow-x: auto;
+                padding: 0.5rem;
+            }
+
+            .menu-category {
+                display: none;
+            }
+
+            .menu-item {
+                white-space: nowrap;
+                flex-shrink: 0;
+            }
+
+            .hero-banner {
+                padding: 2rem 1rem;
+            }
+
+            .grid-2,
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SIDEBAR NAVIGATION -->
+    <nav class="sidebar">
+        <div class="brand">
+            <i class="fa-solid fa-heart-pulse"></i>
+            <span>Health Region 1 Strategist Hub</span>
+        </div>
+        <div class="menu">
+            <a onclick="load('home')" class="menu-item active" id="nav-home">
+                <i class="fa-solid fa-house"></i>
+                <span>ภาพรวมหลักสูตร</span>
+            </a>
+
+            <div class="menu-category">Modules</div>
+            <a onclick="load('m1')" class="menu-item" id="nav-m1">
+                <i class="fa-solid fa-database"></i>
+                <span>M1: Data Management</span>
+            </a>
+            <a onclick="load('m2')" class="menu-item" id="nav-m2">
+                <i class="fa-solid fa-microscope"></i>
+                <span>M2: Root Cause Analysis</span>
+            </a>
+            <a onclick="load('m3')" class="menu-item" id="nav-m3">
+                <i class="fa-solid fa-scale-balanced"></i>
+                <span>M3: Policy Analysis</span>
+            </a>
+            <a onclick="load('m4')" class="menu-item" id="nav-m4">
+                <i class="fa-solid fa-file-pen"></i>
+                <span>M4: Recommendations</span>
+            </a>
+            <a onclick="load('m5')" class="menu-item" id="nav-m5">
+                <i class="fa-solid fa-rocket"></i>
+                <span>M5: Capstone Project</span>
+            </a>
+
+            <div class="menu-category">Resources</div>
+            <a onclick="load('tools')" class="menu-item" id="nav-tools">
+                <i class="fa-solid fa-toolbox"></i>
+                <span>Toolkit & Templates</span>
+            </a>
+            <a onclick="load('about')" class="menu-item" id="nav-about">
+                <i class="fa-solid fa-circle-info"></i>
+                <span>เกี่ยวกับหลักสูตร</span>
+            </a>
+        </div>
+        <div class="user-profile">
+            <div class="avatar">U</div>
+            <div style="font-size: 0.85rem;">
+                <div style="font-weight: 600; color: var(--text-main);">User</div>
+                <div style="color: var(--text-light); font-size: 0.75rem;">Health Strategist</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="main-content">
+        <div class="container" id="app-content">
+            <!-- Content Injected Here -->
+        </div>
+
+        <div style="height: 50px;"></div>
+    </main>
+
+    <!-- SLIDESHOW MODAL -->
+    <!-- FLIPBOOK MODAL -->
+    <div id="flipbook-modal" class="flipbook-modal">
+        <div class="flipbook-wrapper">
+            <div class="flipbook-header">
+                <span id="flipbook-title" style="font-weight: 600; color: var(--primary);">Document Viewer</span>
+                <button onclick="closeFlipbook()" class="close-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="flipbook-viewport" id="flipbook-viewport">
+                <div class="flipbook-container" id="book">
+                    <!-- Pages will be injected here -->
+                </div>
+                <!-- Loading Indicator -->
+                <div id="flipbook-loading"
+                    style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); text-align:center;">
+                    <i class="fa-solid fa-spinner fa-spin" style="font-size:3rem; color:var(--primary);"></i>
+                    <p style="margin-top:1rem; color:var(--text-secondary);">Loading Document...</p>
+                </div>
+            </div>
+
+            <div class="flipbook-controls">
+                <button onclick="onPrevPage()" class="control-btn"><i class="fa-solid fa-chevron-left"></i>
+                    Previous</button>
+                <span id="page-counter" style="color: var(--text-secondary); font-variant-numeric: tabular-nums;">Page
+                    1</span>
+                <button onclick="onNextPage()" class="control-btn">Next <i
+                        class="fa-solid fa-chevron-right"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* Flipbook Styles */
+        .flipbook-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(5px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .flipbook-wrapper {
+            width: 95%;
+            /* Wider for book spread */
+            max-width: 1400px;
+            height: 90vh;
+            background: transparent;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .flipbook-header {
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            border-radius: var(--radius) var(--radius) 0 0;
+            flex-shrink: 0;
+        }
+
+        .flipbook-viewport {
+            flex: 1;
+            position: relative;
+            background: #27272a;
+            /* Zinc-800 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: auto;
+            /* Allow scrolling if zoomed */
+        }
+
+        #the-canvas {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .flipbook-controls {
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            align-items: center;
+            background: white;
+            border-top: 1px solid var(--border);
+            flex-shrink: 0;
+            z-index: 10;
+        }
+
+
+
+
+
+        /* Page Styles for Canvas */
+        .page {
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            /* Important for StPageFlip to center content */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .page canvas {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* Loading State */
+        .loading {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+    </style>
+
+    <script>
+        // --- PDF SLIDESHOW LOGIC ---
+        let pdfDoc = null;
+        let pageNum = 1;
+        let pageRendering = false;
+        let pageNumPending = null;
+        let scale = 1.5;
+        let canvas = null;
+        let ctx = null;
+
+        async function openPDFViewer(url, title) {
+            const modal = document.getElementById('flipbook-modal');
+            const container = document.getElementById('book'); // Reusing existing ID
+            const titleEl = document.getElementById('flipbook-title');
+            const loading = document.getElementById('flipbook-loading');
+
+            // Reset UI
+            container.innerHTML = '';
+            titleEl.innerText = title;
+            modal.style.display = 'flex';
+            loading.style.display = 'block';
+
+            // Create Single Canvas for Slideshow
+            canvas = document.createElement('canvas');
+            canvas.id = 'the-canvas';
+            container.appendChild(canvas);
+            ctx = canvas.getContext('2d');
+
+            // Add Fullscreen Button if not exists
+            if (!document.getElementById('btn-fullscreen')) {
+                const controls = document.querySelector('.flipbook-controls');
+                const fsBtn = document.createElement('button');
+                fsBtn.id = 'btn-fullscreen';
+                fsBtn.className = 'control-btn';
+                fsBtn.innerHTML = '<i class="fa-solid fa-expand"></i> Full Screen';
+                fsBtn.onclick = toggleFullScreen;
+                controls.appendChild(fsBtn);
+            }
+
+            const encodedPdfUrl = encodeURI(url);
+
+            try {
+                const loadingTask = pdfjsLib.getDocument(encodedPdfUrl);
+                pdfDoc = await loadingTask.promise;
+
+                pageNum = 1;
+                renderPage(pageNum);
+                loading.style.display = 'none';
+
+                // Add Event Listeners
+                window.addEventListener('resize', handleResize);
+                document.addEventListener('keydown', handleKeyboardNav);
+                document.addEventListener('fullscreenchange', handleFullScreenChange);
+            } catch (error) {
+                console.error('Error loading PDF:', error);
+                let message = 'Could not load the document.\n';
+                if (window.location.protocol === 'file:') {
+                    message += 'NOTE: Browsers block local file access. Please use the "start_learning_hub.bat" file to run this app.\n';
+                }
+                message += 'Error Details: ' + error.message;
+                alert(message);
+                loading.style.display = 'none';
+                closePDFViewer();
+            }
+        }
+
+
+
+        function renderPage(num) {
+            pageRendering = true;
+
+            // Fetch page
+            pdfDoc.getPage(num).then(function (page) {
+                const dpr = window.devicePixelRatio || 1;
+
+                // 1. Get Base Dimensions
+                const unscaledViewport = page.getViewport({ scale: 1 });
+                const container = document.getElementById('flipbook-viewport'); // Wrapper
+                const desiredWidth = container.clientWidth * 0.95; // Increased width usage slightly
+                const desiredHeight = container.clientHeight * 0.95;
+
+                // 2. Calculate Scale to Fit Container (Logical CSS pixels)
+                const scaleX = desiredWidth / unscaledViewport.width;
+                const scaleY = desiredHeight / unscaledViewport.height;
+                const scaleToFit = Math.min(scaleX, scaleY);
+
+                // 3. Configure Canvas for High DPI
+                // Set the actual number of pixels in the canvas (internal memory)
+                // We multiply by dpr to get sharp text on Retina/HighDPI screens
+                const outputScale = scaleToFit * dpr;
+                const outputViewport = page.getViewport({ scale: outputScale });
+
+                canvas.width = Math.floor(outputViewport.width);
+                canvas.height = Math.floor(outputViewport.height);
+
+                // Set the display size in CSS pixels (logical size)
+                // This ensures it fits on screen but contains more pixels for sharpness
+                canvas.style.width = `${Math.floor(outputViewport.width / dpr)}px`;
+                canvas.style.height = `${Math.floor(outputViewport.height / dpr)}px`;
+
+                // 4. Render
+                const renderContext = {
+                    canvasContext: ctx,
+                    viewport: outputViewport
+                };
+
+                const renderTask = page.render(renderContext);
+
+                // Wait for render to finish
+                renderTask.promise.then(function () {
+                    pageRendering = false;
+                    if (pageNumPending !== null) {
+                        renderPage(pageNumPending);
+                        pageNumPending = null;
+                    }
+                });
+            });
+
+            // Update Counters
+            document.getElementById('page-counter').textContent = `Page ${num} of ${pdfDoc.numPages}`;
+        }
+
+        function queueRenderPage(num) {
+            if (pageRendering) {
+                pageNumPending = num;
+            } else {
+                renderPage(num);
+            }
+        }
+
+        function onPrevPage() {
+            if (pageNum <= 1) return;
+            pageNum--;
+            queueRenderPage(pageNum);
+        }
+
+        function onNextPage() {
+            if (!pdfDoc || pageNum >= pdfDoc.numPages) return;
+            pageNum++;
+            queueRenderPage(pageNum);
+        }
+
+        function closePDFViewer() {
+            // Force exit fullscreen if active
+            if (document.fullscreenElement) {
+                document.exitFullscreen().catch(err => console.log(err));
+            }
+
+            document.getElementById('flipbook-modal').style.display = 'none';
+            pdfDoc = null;
+            pageNum = 1;
+            pageRendering = false;
+            pageNumPending = null;
+            // Clear canvas to free memory
+            const container = document.getElementById('book');
+            container.innerHTML = '';
+
+            // Remove Event Listeners
+            window.removeEventListener('resize', handleResize);
+            document.removeEventListener('keydown', handleKeyboardNav);
+            document.removeEventListener('fullscreenchange', handleFullScreenChange);
+        }
+
+        function toggleFullScreen() {
+            // Target the wrapper so controls are included in fullscreen
+            const wrapper = document.querySelector('.flipbook-wrapper');
+            if (!document.fullscreenElement) {
+                wrapper.requestFullscreen().catch(err => {
+                    alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        function handleFullScreenChange() {
+            const wrapper = document.querySelector('.flipbook-wrapper');
+            if (document.fullscreenElement) {
+                // Entered Full Screen
+                wrapper.style.background = "#27272a";
+                wrapper.style.display = "flex";
+                wrapper.style.flexDirection = "column";
+            } else {
+                // Exited Full Screen (via button OR Escape key)
+                wrapper.style.background = "";
+            }
+        }
+
+        // --- Event Handlers ---
+        let resizeTimeout;
+        function handleResize() {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                if (pdfDoc) renderPage(pageNum);
+            }, 200);
+        }
+
+        function handleKeyboardNav(e) {
+            if (document.getElementById('flipbook-modal').style.display === 'flex') {
+                if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') {
+                    onNextPage();
+                } else if (e.key === 'ArrowLeft') {
+                    onPrevPage();
+                } else if (e.key === 'Escape') {
+                    if (!document.fullscreenElement) closePDFViewer();
+                }
+            }
+        }
+
+        // Map old Flipbook calls to new PDF viewer for backward compatibility in onclicks
+        // We will update the onclicks in HTML as well, but this is a safety net.
+        const openFlipbook = openPDFViewer;
+        const closeFlipbook = closePDFViewer;
+        const bookFlipNext = onNextPage;
+        const bookFlipPrev = onPrevPage;
+
+        let currentDeckId = null;
+        let currentSlideIndex = 0;
+
+        function openSlideshow(deckId) {
+            if (!slideDecks[deckId]) {
+                alert('Slide deck content is being prepared. Please check back later!');
+                return;
+            }
+            currentDeckId = deckId;
+            currentSlideIndex = 0;
+            document.getElementById('slideshow-modal').style.display = 'flex';
+            document.getElementById('slide-deck-title').innerText = slideDecks[deckId].title;
+            renderSlide();
+        }
+
+        function closeSlideshow() {
+            document.getElementById('slideshow-modal').style.display = 'none';
+            currentDeckId = null;
+        }
+
+        function changeSlide(direction) {
+            if (!currentDeckId) return;
+            const deck = slideDecks[currentDeckId];
+            const newIndex = currentSlideIndex + direction;
+
+            if (newIndex >= 0 && newIndex < deck.slides.length) {
+                currentSlideIndex = newIndex;
+                renderSlide();
+            }
+        }
+
+        function renderSlide() {
+            const deck = slideDecks[currentDeckId];
+            const slide = deck.slides[currentSlideIndex];
+            const contentDiv = document.getElementById('current-slide');
+            const progress = document.getElementById('slide-progress');
+            const counter = document.getElementById('slide-counter');
+
+            // Update UI Controls
+            document.getElementById('btn-prev').disabled = currentSlideIndex === 0;
+            document.getElementById('btn-next').disabled = currentSlideIndex === deck.slides.length - 1;
+            document.getElementById('btn-prev').style.opacity = currentSlideIndex === 0 ? 0.5 : 1;
+            document.getElementById('btn-next').style.opacity = currentSlideIndex === deck.slides.length - 1 ? 0.5 : 1;
+
+            counter.innerText = `${currentSlideIndex + 1} / ${deck.slides.length}`;
+            progress.style.width = `${((currentSlideIndex + 1) / deck.slides.length) * 100}%`;
+
+            // Render Content based on Type
+            let html = '';
+            if (slide.type === 'title') {
+                contentDiv.classList.add('slide-type-title');
+                html = `
+                    <div class="slide-title">${slide.title}</div>
+                    <div class="slide-body" style="font-size: 1.5rem; color: var(--text-light);">${slide.subtitle || ''}</div>
+                `;
+            } else {
+                contentDiv.classList.remove('slide-type-title');
+                html = `<div class="slide-title">${slide.title}</div>`;
+
+                if (slide.items && slide.items.length > 0) {
+                    html += `<ul class="slide-bullets">`;
+                    slide.items.forEach(item => {
+                        html += `<li>${item}</li>`;
+                    });
+                    html += `</ul>`;
+                }
+
+                if (slide.visual) {
+                    html += `
+                        <div class="slide-visual-placeholder">
+                            <i class="fa-solid fa-image" style="font-size: 3rem; margin-bottom: 0.5rem; color: #9ca3af;"></i>
+                            <span>${slide.visual}</span>
+                        </div>
+                     `;
+                }
+            }
+
+            contentDiv.innerHTML = html;
+        }
+
+        // --- CONTENT REPOSITORY ---
+        const contents = {
+            'home': `
+                <div class="hero-banner">
+                    <h1 style="color:white; margin:0;">Health Region 1 Strategist Learning Hub</h1>
+                    <p style="color: var(--primary-light); margin-top: 0.5rem; font-size: 1.1rem; opacity: 0.9;">
+                        แพลตฟอร์มการเรียนรู้ครบวงจร สำหรับนักวางกลยุทธ์สาธารณสุขยุคใหม่
+                    </p>
+                    <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+                        <button onclick="load('m1')" style="background: white; color: var(--primary); border:none; padding: 0.6rem 1.2rem; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">เริ่มเรียน Module 1</button>
+                        <button onclick="load('m5')" style="background: rgba(255,255,255,0.2); color: white; border:1px solid rgba(255,255,255,0.4); padding: 0.6rem 1.2rem; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer;">ไปที่ Capstone Project</button>
+                    </div>
+                </div>
+
+                <h2><i class="fa-solid fa-road" style="color: var(--secondary);"></i> เส้นทางการเรียนรู้ 5 ขั้นตอน (Curriculum Journey)</h2>
+                <div class="step-indicator">
+                    <div class="step-item active">
+                        <div class="step-circle">1</div>
+                        <div class="step-label">Data</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-circle">2</div>
+                        <div class="step-label">RCA</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-circle">3</div>
+                        <div class="step-label">Policy</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-circle">4</div>
+                        <div class="step-label">Recs</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-circle">5</div>
+                        <div class="step-label">Capstone</div>
+                    </div>
+                </div>
+
+                <div class="grid-3">
+                    <!-- M1 -->
+                    <div class="card" onclick="load('m1')" style="cursor: pointer; border-top: 4px solid var(--primary);">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:1rem;">
+                            <span class="header-badge" style="margin:0;">Module 1</span>
+                            <i class="fa-solid fa-database" style="color: var(--primary); font-size: 1.25rem;"></i>
+                        </div>
+                        <h4>Data Management</h4>
+                        <p style="font-size:0.85rem;">การจัดการแหล่งข้อมูลสุขภาพ (MOPH, NHSO) และการตรวจสอบคุณภาพด้วย TRUST Framework</p>
+                    </div>
+                    <!-- M2 -->
+                    <div class="card" onclick="load('m2')" style="cursor: pointer; border-top: 4px solid var(--secondary);">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:1rem;">
+                            <span class="header-badge" style="margin:0; background: var(--secondary-light); color: var(--secondary); border-color:rgba(244,81,30,0.2);">Module 2</span>
+                            <i class="fa-solid fa-microscope" style="color: var(--secondary); font-size: 1.25rem;"></i>
+                        </div>
+                        <h4>Root Cause Analysis</h4>
+                        <p style="font-size:0.85rem;">เครื่องมือวิเคราะห์สาเหตุเชิงลึก: 5 Whys, Fishbone Diagram และ Causal Loop</p>
+                    </div>
+                    <!-- M3 -->
+                    <div class="card" onclick="load('m3')" style="cursor: pointer; border-top: 4px solid var(--accent);">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:1rem;">
+                            <span class="header-badge" style="margin:0; background: #ede9fe; color: var(--accent); border-color:rgba(94,53,177,0.2);">Module 3</span>
+                            <i class="fa-solid fa-scale-balanced" style="color: var(--accent); font-size: 1.25rem;"></i>
+                        </div>
+                        <h4>Policy Analysis</h4>
+                        <p style="font-size:0.85rem;">Policy Triangle, Stakeholders Analysis และการประเมินทางเลือกด้วย MCDA</p>
+                    </div>
+                </div>
+                
+                 <div class="grid-2">
+                    <div class="card" onclick="load('m4')" style="cursor: pointer; border-left: 4px solid #10b981;">
+                         <div style="display:flex; justify-content:space-between;">
+                            <span style="font-weight:700; color:#10b981; font-size:1.1rem;">Module 4: Evidence-Based Recommendations</span>
+                            <i class="fa-solid fa-file-pen" style="color: #cbd5e1;"></i>
+                        </div>
+                        <p style="font-size:0.85rem; margin-top:0.5rem;">การสร้างข้อเสนอแนะเชิงหลักฐาน, SMART Criteria และ Theory of Change</p>
+                    </div>
+                     <div class="card" onclick="load('m5')" style="cursor: pointer; border-left: 4px solid #ef4444;">
+                         <div style="display:flex; justify-content:space-between;">
+                            <span style="font-weight:700; color:#ef4444; font-size:1.1rem;">Module 5: Capstone Project</span>
+                            <i class="fa-solid fa-rocket" style="color: #cbd5e1;"></i>
+                        </div>
+                        <p style="font-size:0.85rem; margin-top:0.5rem;">โครงการบูรณาการ: การวิเคราะห์และเสนอนโยบายสุขภาพแบบเต็มรูปแบบ</p>
+                    </div>
+                 </div>
+            `,
+            'm1': `
+                <div class="header-badge">Module 1</div>
+                <h1>การจัดการข้อมูลสุขภาพ (Data Management)</h1>
+                <p>เรียนรู้แหล่งข้อมูลสำคัญของไทย และวิธีการตรวจสอบความน่าเชื่อถือ</p>
+
+                <!-- Section for Slides -->
+                <div class="card" style="background: linear-gradient(to right, #f0fdfa, white); border-color: var(--primary-light);">
+                    <h3 style="margin-top:0; color:var(--primary-dark);"><i class="fa-solid fa-book-open"></i> เอกสารประกอบการบรรยาย (Flipbook)</h3>
+                    <p style="font-size:0.9rem;">คลิกเพื่อเปิดอ่านเอกสารรูปแบบ E-Book</p>
+                    <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-top:1rem;">
+                        <button onclick="openFlipbook('training-materials/Module-1/1.1 แหล่งข้อมูลสุขภาพไทย.pdf', '1.1 แหล่งข้อมูลสุขภาพไทย')" class="control-btn" style="border-color:var(--primary); color:var(--primary-dark);">
+                            <i class="fa-regular fa-file-pdf"></i> 1.1 แหล่งข้อมูลสุขภาพไทย
+                        </button>
+                        <button onclick="openFlipbook('training-materials/Module-1/1.2 การค้นหาและรวบรวมข้อมูล.pdf', '1.2 การค้นหาข้อมูล')" class="control-btn" style="border-color:var(--primary); color:var(--primary-dark);">
+                            <i class="fa-regular fa-file-pdf"></i> 1.2 การค้นหาข้อมูล
+                        </button>
+                         <button onclick="openFlipbook('training-materials/Module-1/1.3 การตรวจสอบความน่าเชื่อถือของข้อมูล.pdf', '1.3 TRUST Framework')" class="control-btn" style="border-color:var(--primary); color:var(--primary-dark);">
+                            <i class="fa-regular fa-file-pdf"></i> 1.3 TRUST Framework
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid-3">
+                     <div class="stat-card">
+                        <div class="stat-value">18+</div>
+                        <div class="stat-label">Data Sources</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">TRUST</div>
+                        <div class="stat-label">Quality Framework</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">8 hr</div>
+                        <div class="stat-label">Workshop Time</div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 1.5rem;">
+                     <h3><i class="fa-solid fa-server"></i> แหล่งข้อมูลสุขภาพหลัก (Key Data Sources)</h3>
+                     <div class="grid-2">
+                        <a href="https://spd.moph.go.th/" target="_blank" class="resource-link">
+                            <div>
+                                <strong>MOPH HDC</strong>
+                                <div class="resource-meta">กระทรวงสาธารณสุข (Health Data Center)</div>
+                            </div>
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </a>
+                        <a href="https://www.nhso.go.th/" target="_blank" class="resource-link">
+                            <div>
+                                <strong>NHSO Dashboard</strong>
+                                <div class="resource-meta">สปสช. (ระบบหลักประกันสุขภาพถ้วนหน้า)</div>
+                            </div>
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </a>
+                        <a href="http://www.nso.go.th/" target="_blank" class="resource-link">
+                            <div>
+                                <strong>NSO Statistics</strong>
+                                <div class="resource-meta">สำนักงานสถิติแห่งชาติ (ข้อมูลประชากร)</div>
+                            </div>
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </a>
+                        <a href="https://gdcatalog.go.th/" target="_blank" class="resource-link">
+                            <div>
+                                <strong>Gov Data Catalog</strong>
+                                <div class="resource-meta">ศูนย์กลางข้อมูลเปิดภาครัฐ</div>
+                            </div>
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </a>
+                     </div>
+                </div>
+
+                <div class="card" style="background: #f0fdfa; border-color: #ccfbf1;">
+                    <h3><i class="fa-solid fa-check-double"></i> TRUST Framework</h3>
+                    <p>กรอบแนวคิดสำหรับการตรวจสอบคุณภาพข้อมูลก่อนนำมาใช้งาน</p>
+                    <div class="grid-2">
+                        <div>
+                            <ul style="margin-left:1.5rem; line-height:1.8;">
+                                <li><strong>T - Timely:</strong> เป็นปัจจุบันหรือไม่?</li>
+                                <li><strong>R - Reliable:</strong> แหล่งที่มาน่าเชื่อถือ? วิธีเก็บได้มาตรฐาน?</li>
+                                <li><strong>U - Useful:</strong> ตอบโจทย์คำถามวิจัย?</li>
+                            </ul>
+                        </div>
+                         <div>
+                            <ul style="margin-left:1.5rem; line-height:1.8;">
+                                <li><strong>S - Specific:</strong> ละเอียดเพียงพอหรือไม่ (Granularity)?</li>
+                                <li><strong>T - Triangulated:</strong> ตรงกันกับแหล่งอื่นหรือไม่?</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `,
+            'm2': `
+                <div class="header-badge" style="background: var(--secondary-light); color: var(--secondary); border-color: var(--secondary);">Module 2</div>
+                <h1>การวิเคราะห์สาเหตุรากเหง้า (RCA)</h1>
+                <p>เครื่องมือวิเคราะห์ปัญหาเชิงลึก เพื่อไม่ให้แก้ปัญหาที่ปลายเหตุ</p>
+
+                <!-- Section for Slides -->
+                <div class="card" style="background: linear-gradient(to right, #fff7ed, white); border-color: var(--secondary-light);">
+                    <h3 style="margin-top:0; color:var(--secondary);"><i class="fa-solid fa-book-open"></i> เอกสารประกอบการบรรยาย (Flipbook)</h3>
+                    <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-top:1rem;">
+                        <button onclick="openFlipbook('training-materials/Module-2/2.1 กรอบแนวคิด RCA.pdf', '2.1 แนวคิด RCA')" class="control-btn" style="border-color:var(--secondary); color:var(--secondary);">
+                            <i class="fa-regular fa-file-pdf"></i> 2.1 แนวคิด RCA
+                        </button>
+                        <button onclick="openFlipbook('training-materials/Module-2/2.2 เครื่องมือวิเคราะห์สาเหตุ.pdf', '2.2 เครื่องมือ RCA')" class="control-btn" style="border-color:var(--secondary); color:var(--secondary);">
+                            <i class="fa-regular fa-file-pdf"></i> 2.2 เครื่องมือ RCA
+                        </button>
+                         <button onclick="openFlipbook('training-materials/Module-2/2.3 การระบุปัจจัยเสี่ยงเชิงระบบ.pdf', '2.3 System Risk Factors')" class="control-btn" style="border-color:var(--secondary); color:var(--secondary);">
+                            <i class="fa-regular fa-file-pdf"></i> 2.3 System Risk Factors
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="card">
+                        <h3><i class="fa-solid fa-question"></i> 5 Whys Analysis</h3>
+                        <p>การถาม "ทำไม" ต่อเนื่องกันเพื่อขุดลึกลงไปหาสาเหตุที่แท้จริง</p>
+                        <div class="interactive-box" style="padding:1rem; border-style:solid; background:white;">
+                            <div style="font-size:0.9rem; margin-bottom:0.5rem; font-weight:600;">ตัวอย่าง: ผู้ป่วยขาดยา</div>
+                            <div style="font-size:0.85rem; line-height:1.6; padding-left:0.5rem; border-left:2px solid var(--secondary);">
+                                1. ทำไม? -> ไม่มาตามนัด<br>
+                                2. ทำไม? -> ลืมวันนัด<br>
+                                3. ทำไม? -> ใบนัดหาย<br>
+                                4. ทำไม? -> <strong>ไม่มีระบบเตือนทางมือถือ (Root Cause)</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                         <h3><i class="fa-solid fa-fish"></i> Fishbone Diagram</h3>
+                         <p>แยกแยะสาเหตุตามหมวดหมู่ <strong>4P</strong></p>
+                         <ul style="font-size:0.9rem; margin-left:1.2rem; margin-top:0.5rem; line-height:1.6;">
+                            <li><strong>People:</strong> บุคลากร, ผู้ป่วย, ญาติ</li>
+                            <li><strong>Process:</strong> ขั้นตอนการทำงาน, ระบบนัดหมาย</li>
+                            <li><strong>Policy:</strong> นโยบาย, กฎหมาย, งบประมาณ</li>
+                            <li><strong>Place:</strong> สถานที่, สิ่งแวดล้อม</li>
+                         </ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fa-solid fa-rotate"></i> Causal Loop Diagram (CLD)</h3>
+                    <p>การมองปัญหาแบบพลวัตระบบ (System Dynamics) ทั้งวงจรเสริมแรง (Reinforcing) และวงจรสมดุล (Balancing)</p>
+                    <div style="text-align:center; padding:1.5rem; background:#fff7ed; border-radius:var(--radius-sm); border:1px solid #ffedd5;">
+                        <i class="fa-solid fa-arrows-spin" style="font-size:3rem; color:var(--secondary); margin-bottom:1rem;"></i>
+                        <p style="font-weight:600;">Reinforcing Loop ตัวอย่าง:</p>
+                        <p style="font-size:0.9rem;">ผู้ป่วยมาก -> ภาระงานแพทย์เพิ่ม -> เวลาตรวจต่อคนลดลง -> คุณภาพลด -> ผู้ป่วยอาการแย่ลง -> กลับมาป่วยซ้ำ -> ผู้ป่วยมาก</p>
+                    </div>
+                </div>
+            `,
+            'm3': `
+                 <div class="header-badge" style="background: #ede9fe; color: var(--accent); border-color: var(--accent);">Module 3</div>
+                <h1>การวิเคราะห์นโยบาย (Policy Analysis)</h1>
+                <p>เครื่องมือสำหรับการเข้าใจบริบทและตัดสินใจเลือกนโยบายที่ดีที่สุด</p>
+
+                <!-- Section for Slides -->
+                <div class="card" style="background: linear-gradient(to right, #f3f3ff, white); border-color: #ddd6fe;">
+                    <h3 style="margin-top:0; color:var(--accent);"><i class="fa-solid fa-book-open"></i> เอกสารประกอบการบรรยาย (Flipbook)</h3>
+                    <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-top:1rem;">
+                        <button onclick="openFlipbook('training-materials/Module-3/3.1 กรอบการวิเคราะห์นโยบาย.pdf', '3.1 Policy Frameworks')" class="control-btn" style="border-color:var(--accent); color:var(--accent);">
+                            <i class="fa-regular fa-file-pdf"></i> 3.1 Policy Frameworks
+                        </button>
+                        <button onclick="openFlipbook('training-materials/Module-3/3.2 การวิเคราะห์ผู้มีส่วนได้ส่วนเสีย.pdf', '3.2 Stakeholder Analysis')" class="control-btn" style="border-color:var(--accent); color:var(--accent);">
+                            <i class="fa-regular fa-file-pdf"></i> 3.2 Stakeholder Analysis
+                        </button>
+                         <button onclick="openFlipbook('training-materials/Module-3/3.3 การเปรียบเทียบทางเลือกนโยบาย.pdf', '3.3 Policy Options')" class="control-btn" style="border-color:var(--accent); color:var(--accent);">
+                            <i class="fa-regular fa-file-pdf"></i> 3.3 Policy Options
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fa-solid fa-shapes"></i> Policy Triangle Framework</h3>
+                    <p>กรอบแนวคิด 4 ด้านสำหรับการวิเคราะห์นโยบายสาธารณสุข</p>
+                    <div class="table-responsive">
+                        <table>
+                            <tr>
+                                <th style="width:25%">Content (เนื้อหา)</th>
+                                <td>ตัวนโยบายคืออะไร? เป้าหมายคืออะไร? วิธีการคืออะไร?</td>
+                            </tr>
+                            <tr>
+                                <th>Context (บริบท)</th>
+                                <td>ปัจจัยแวดล้อม: การเมือง (Politics), เศรษฐกิจ (Economy), สังคม (Society)</td>
+                            </tr>
+                            <tr>
+                                <th>Process (กระบวนการ)</th>
+                                <td>นโยบายถูกสร้างอย่างไร? ใครกำหนดวาระ? การนำไปใช้เป็นอย่างไร?</td>
+                            </tr>
+                            <tr>
+                                <th>Actors (ผู้เกี่ยวข้อง)</th>
+                                <td>Stakeholders คือใคร? ใครมีอำนาจตัดสินใจ? ใครได้รับผลกระทบ?</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fa-solid fa-calculator"></i> MCDA Calculator (Demo)</h3>
+                    <p>Multi-Criteria Decision Analysis: การวิเคราะห์การตัดสินใจหลายเกณฑ์</p>
+                    
+                    <div class="interactive-box">
+                        <div class="grid-3" style="margin-bottom:1rem;">
+                            <div>
+                                <label style="font-size:0.8rem;">Effectiveness (Weight: 0.4)</label>
+                                <input type="number" id="sc_eff" value="4" min="1" max="5" style="width:100%; padding:0.5rem; border:1px solid var(--border);">
+                            </div>
+                            <div>
+                                <label style="font-size:0.8rem;">Cost (Weight: 0.3)</label>
+                                <input type="number" id="sc_cost" value="3" min="1" max="5" style="width:100%; padding:0.5rem; border:1px solid var(--border);">
+                            </div>
+                            <div>
+                                <label style="font-size:0.8rem;">Feasibility (Weight: 0.3)</label>
+                                <input type="number" id="sc_feas" value="5" min="1" max="5" style="width:100%; padding:0.5rem; border:1px solid var(--border);">
+                            </div>
+                        </div>
+                        <button onclick="calculateMCDA()" style="background:var(--accent); color:white; border:none; padding:0.75rem 1.5rem; border-radius:var(--radius-sm); cursor:pointer;">
+                            Calculate Score
+                        </button>
+                        <div id="mcda_result" style="margin-top:1rem; font-weight:bold; color:var(--accent);"></div>
+                    </div>
+                </div>
+            `,
+            'm4': `
+                <div class="header-badge" style="background: #ecfdf5; color: #047857; border-color: #047857;">Module 4</div>
+                <h1>ข้อเสนอแนะเชิงหลักฐาน (Recommendations)</h1>
+                <p>การเปลี่ยนผลการวิเคราะห์ให้เป็นข้อเสนอเชิงนโยบายที่นำไปปฏิบัติได้จริง</p>
+                
+                <div class="card" style="background: linear-gradient(to right, #ecfdf5, white); border-color: #a7f3d0;">
+                    <h3 style="margin-top:0; color:#047857;"><i class="fa-solid fa-book-open"></i> เอกสารประกอบการบรรยาย (Flipbook)</h3>
+                    <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-top:1rem;">
+                        <button onclick="openFlipbook('training-materials/Module-4/4.1 โครงสร้างข้อเสนอแนะนโยบาย.pdf', '4.1 Recommendation Structure')" class="control-btn" style="border-color:#047857; color:#047857;">
+                            <i class="fa-regular fa-file-pdf"></i> 4.1 Structure
+                        </button>
+                        <button onclick="openFlipbook('training-materials/Module-4/4.2 การเขียนอย่างมีประสิทธิภาพ.pdf', '4.2 Writing Effectively')" class="control-btn" style="border-color:#047857; color:#047857;">
+                            <i class="fa-regular fa-file-pdf"></i> 4.2 Writing
+                        </button>
+                         <button onclick="openFlipbook('training-materials/Module-4/4.3 การนำเสนอและสื่อสารนโยบาย.pdf', '4.3 Communication')" class="control-btn" style="border-color:#047857; color:#047857;">
+                            <i class="fa-regular fa-file-pdf"></i> 4.3 Communication
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="card">
+                        <h3>SMART Recommendations</h3>
+                        <p>ข้อเสนอแนะที่ดีต้องผ่านเกณฑ์ 5 ข้อ:</p>
+                        <ul style="margin-left:1.5rem; font-size:0.9rem; line-height:1.7;">
+                            <li><strong>Specific:</strong> เจาะจง ไม่กว้างเกินไป</li>
+                            <li><strong>Measurable:</strong> วัดผลได้เป็นตัวเลข (KPIs)</li>
+                            <li><strong>Achievable:</strong> เป็นไปได้จริง ในทรัพยากรที่มี</li>
+                            <li><strong>Relevant:</strong> ตรงประเด็น แก้ปัญหาได้จริง</li>
+                            <li><strong>Time-bound:</strong> มีกรอบเวลาชัดเจน</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>Theory of Change (ToC)</h3>
+                        <p>เชื่อมโยงสิ่งที่ทำกับผลลัพธ์ที่ต้องการ (Logic Model)</p>
+                        <div style="background:#f3f4f6; padding:1rem; border-radius:var(--radius-sm); font-size:0.85rem; text-align:center;">
+                            <strong>Inputs</strong> -> <strong>Activities</strong> -> <strong>Outputs</strong> -> <strong>Outcomes</strong> -> <strong>Impact</strong>
+                        </div>
+                        <p style="font-size:0.85rem; color:var(--text-light); margin-top:0.5rem; text-align:center;"><em>"ถ้าเราทำสิ่งนี้... จะเกิดผลสิ่งนั้น... นำไปสู่เป้าหมายสูงสุด"</em></p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Policy Brief Structure</h3>
+                    <p>โครงสร้างมาตรฐานของการสื่อสารนโยบาย (1-4 หน้า)</p>
+                    <ol style="margin-left:1.5rem; font-size:0.9rem;">
+                        <li><strong>Executive Summary:</strong> บทสรุปผู้บริหาร</li>
+                        <li><strong>Problem Statement:</strong> ปัญหาคืออะไร ทำไมต้องแก้ตอนนี้</li>
+                        <li><strong>Policy Options:</strong> ทางเลือกต่างๆ ที่พิจารณา</li>
+                        <li><strong>Recommendations:</strong> ข้อเสนอแนะที่เลือก + เหตุผล</li>
+                        <li><strong>Implementation Plan:</strong> แผนการดำเนินงาน</li>
+                    </ol>
+                </div>
+            `,
+            'm5': `
+                <div class="header-badge" style="background:#fee2e2; color:#b91c1c; border-color:#b91c1c;">Module 5</div>
+                <h1>Capstone Project</h1>
+                <p>โครงการจบหลักสูตร: บูรณาการความรู้ทุก Module ลงมือทำจริง</p>
+
+                <div class="card" style="background: linear-gradient(to right, #fef2f2, white); border-color: #fecaca;">
+                    <h3 style="margin-top:0; color:#b91c1c;"><i class="fa-solid fa-book-open"></i> เอกสารประกอบการบรรยาย (Flipbook)</h3>
+                    <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-top:1rem;">
+                        <button onclick="openFlipbook('training-materials/Module-5/5.1 Capstone Project.pdf', '5.1 Capstone Project')" class="control-btn" style="border-color:#b91c1c; color:#b91c1c;">
+                            <i class="fa-regular fa-file-pdf"></i> 5.1 Capstone Project
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fa-solid fa-list-check"></i> ขั้นตอนการทำโครงการ (Project Steps)</h3>
+                    <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                        <div class="resource-link"><strong>1. Problem Analysis:</strong> กำหนดปัญหาและรวบรวมข้อมูลสุขภาพ (M1)</div>
+                        <div class="resource-link"><strong>2. Root Cause Analysis:</strong> หาต้นตอด้วย 5 Whys & Fishbone (M2)</div>
+                        <div class="resource-link"><strong>3. Options Development:</strong> สร้างทางเลือกนโยบายและประเมิน (M3)</div>
+                        <div class="resource-link"><strong>4. Recommendation:</strong> จัดทำข้อเสนอแนะและแผนงาน (M4)</div>
+                        <div class="resource-link"><strong>5. Communication:</strong> เขียน Policy Brief และนำเสนอ</div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3><i class="fa-solid fa-clipboard-check"></i> เกณฑ์การประเมิน (Total 100%)</h3>
+                    <div class="grid-3">
+                         <div class="stat-card">
+                            <div class="stat-value">70%</div>
+                            <div class="stat-label">Full Report</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">20%</div>
+                            <div class="stat-label">Policy Brief</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">10%</div>
+                            <div class="stat-label">Presentation</div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            'tools': `
+                <div class="header-badge">Toolkit</div>
+                <h1>คลังเครื่องมือและเทมเพลต (Tools & Resources)</h1>
+                
+                <div class="card">
+                    <h3 style="margin-top:0;">Downloadable Templates</h3>
+                    <div class="grid-2">
+                        <a href="training-materials/Module-1/M1-Data-Dictionary-Template.md" class="resource-link" target="_blank">
+                            <span><i class="fa-solid fa-file-excel"></i> Data Dictionary Template</span>
+                        </a>
+                        <a href="training-materials/Module-2/M2-Worksheet-5-Whys.md" class="resource-link" target="_blank">
+                            <span><i class="fa-solid fa-file-word"></i> 5 Whys Worksheet</span>
+                        </a>
+                        <a href="training-materials/templates/mcda-template.md" class="resource-link" target="_blank">
+                            <span><i class="fa-solid fa-file-lines"></i> MCDA Worksheet Template</span>
+                        </a>
+                        <a href="training-materials/templates/policy-recommendation-template.md" class="resource-link" target="_blank">
+                            <span><i class="fa-solid fa-file-powerpoint"></i> Policy Recommendation Template</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Reference Links</h3>
+                    <ul>
+                        <li><a href="https://www.who.int/" target="_blank">World Health Organization (WHO)</a></li>
+                        <li><a href="https://www.ihppthaigov.net/" target="_blank">IHPP Thailand</a></li>
+                        <li><a href="https://www.hitap.net/" target="_blank">HITAP</a></li>
+                    </ul>
+                </div>
+            `,
+            'about': `
+                <h1>เกี่ยวกับหลักสูตร (About)</h1>
+                <div class="card">
+                    <p><strong>Health Region 1 Strategist Training Course</strong></p>
+                    <p>หลักสูตรอบรมเชิงปฏิบัติการเพื่อพัฒนาศักยภาพนักวางแผนยุทธศาสตร์สุขภาพในเขตสุขภาพที่ 1 มุ่งเน้นการใช้ข้อมูลจริง การวิเคราะห์อย่างเป็นระบบ และการสร้างนโยบายที่นำไปปฏิบัติได้จริง</p>
+                    <p>© 2025 Health Region 1 Strategist Team. All rights reserved.</p>
+                </div>
+            `
+        };
+
+        function load(pageId) {
+            // Update Active Nav
+            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+            const nav = document.getElementById('nav-' + pageId);
+            if (nav) nav.classList.add('active');
+
+            // Inject Content with Fade Animation
+            const container = document.getElementById('app-content');
+            container.style.opacity = '0';
+            setTimeout(() => {
+                container.innerHTML = contents[pageId] || '<h1>Page Not Found</h1>';
+                container.style.opacity = '1';
+                document.querySelector('.main-content').scrollTop = 0;
+            }, 150);
+        }
+
+        function calculateMCDA() {
+            const eff = parseFloat(document.getElementById('sc_eff').value) || 0;
+            const cost = parseFloat(document.getElementById('sc_cost').value) || 0;
+            const feas = parseFloat(document.getElementById('sc_feas').value) || 0;
+
+            // Weight: Eff 0.4, Cost 0.3, Feas 0.3
+            const total = (eff * 0.4) + (cost * 0.3) + (feas * 0.3);
+            document.getElementById('mcda_result').innerText = "Total Score: " + total.toFixed(2) + " / 5.00";
+        }
+
+        // Init
+        load('home');
+    </script>
+</body>
+
+</html>
